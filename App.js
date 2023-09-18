@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { FlatList, ScrollView, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
@@ -20,6 +20,27 @@ export default function App() {
   ]);
 
   
+
+  function renderTodoList() {
+   
+    return todoList.map((todo) => {
+      console.log(todo.title)
+     return(
+      <View style={s.cardItem}>
+        <CardTodo
+          todo={todo}
+        />
+        </View>
+      )
+      
+    });
+     
+       
+        
+     
+   
+  }
+  
   return (
     <>
       <SafeAreaProvider>
@@ -28,7 +49,18 @@ export default function App() {
             <Header />
           </View>
           <View style={s.body}>
-            <CardTodo/>
+        
+       {/* <FlatList
+         data = {todoList}
+         renderItem={({item}) => <CardTodo todo={item} />}
+          keyExtractor={item => item.id}>
+        </FlatList> */}
+
+        <ScrollView>
+        {renderTodoList() }
+        </ScrollView>
+
+
           </View>
         </SafeAreaView>
       </SafeAreaProvider>

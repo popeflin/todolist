@@ -1,16 +1,20 @@
 import { Image, Text, TouchableOpacity } from "react-native";
 import { s } from "./CardTodo.style";
+import checkImage  from "../../assets/check.png"
 
-export function CardTodo() {
+export function CardTodo({todo}) {
+  console.log(todo)
   return (
     <TouchableOpacity style={s.card}>
       <Text
         style={[
-          s.title
+          s.title 
         ]}
       >
-        <Text style={s.title}> Ngapain aja ya .....</Text>
+        {todo.title}
       </Text>
+    {todo.isCompleted &&  <Image style={s.img} source ={checkImage} /> } 
     </TouchableOpacity>
   );
 }
+ 
