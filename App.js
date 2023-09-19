@@ -4,6 +4,8 @@ import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
+import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
+import Dialog from "react-native-dialog";
 
 export default function App() {
   
@@ -72,6 +74,23 @@ export default function App() {
         }
       },{text: "Cancel", style: "cancel"}]);
   }
+
+
+  function renderAddDialog(){
+    return(
+
+      <Dialog.Container visible = {true}>
+      <Dialog.Title>Tambah Todo</Dialog.Title>
+      <Dialog.Description>
+        Apa yang ingin kamu lakukan?.
+      </Dialog.Description>
+      <Dialog.Input placeholder ="Mis : Mandi dan gosok gigi" />
+      <Dialog.Button label="Cancel" />
+      <Dialog.Button label="Save" />
+    </Dialog.Container>
+  
+    );
+  }
   
   return (
     <>
@@ -92,6 +111,7 @@ export default function App() {
         {renderTodoList() }
         </ScrollView>
 
+        <ButtonAdd  />
 
           </View>
         </SafeAreaView>
@@ -99,6 +119,7 @@ export default function App() {
       <View style={s.footer}>
         <Text>Footer</Text>
       </View>
+      {renderAddDialog()}
     </>
   );
 }
