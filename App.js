@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, ScrollView, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
@@ -31,6 +31,7 @@ export default function App() {
       <View key = {todo.id} style={s.cardItem}>
         <CardTodo onPress={updateTodo}
           todo={todo}
+          onLongPress={deteleTodo}
         />
         </View>
       );
@@ -45,7 +46,9 @@ export default function App() {
 
     const updateTodoList =[...todoList];
 
-    // const angkaRandom = [{"id":1 },{"id":2 },{"id":3 }]
+    //  const angkaRandom = [{"id":1 },{"id":2 },{"id":3 }]
+
+    //  const filterAngka = angkaRandom.filter((angka)=> angka.id%2===0);
 
     // const angkaYgDiPilih =  angkaRandom.findIndex((angka)=> angka.id=== 3);
 
@@ -57,8 +60,17 @@ export default function App() {
 
     setTodoList(updateTodoList);
 
+  }
 
-
+  function deteleTodo(todoDelete){
+    Alert.alert("Hapus","Apakah anda yakin ingin menghapus data ini?",[
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          setTodoList(todoList.filter((todo)=> todo.id !== todoDelete.id));
+        }
+      },{text: "Cancel", style: "cancel"}]);
   }
   
   return (
