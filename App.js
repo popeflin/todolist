@@ -21,24 +21,44 @@ export default function App() {
 
   
 
+
+
   function renderTodoList() {
    
     return todoList.map((todo) => {
-      console.log(todo.title)
-     return(
-      <View style={s.cardItem}>
-        <CardTodo
+   
+      return(
+      <View key = {todo.id} style={s.cardItem}>
+        <CardTodo onPress={updateTodo}
           todo={todo}
         />
         </View>
-      )
+      );
       
-    });
-     
-       
-        
-     
-   
+    }); 
+  }
+
+  function updateTodo(todo){
+    const updateTodo = {
+      ...todo,isCompleted: !todo.isCompleted
+    }
+
+    const updateTodoList =[...todoList];
+
+    // const angkaRandom = [{"id":1 },{"id":2 },{"id":3 }]
+
+    // const angkaYgDiPilih =  angkaRandom.findIndex((angka)=> angka.id=== 3);
+
+    //console.log(angkaYgDiPilih);
+
+    const indexToUpdate = updateTodoList.findIndex((todo)=> todo.id=== updateTodo.id);
+
+    updateTodoList[indexToUpdate] = updateTodo;
+
+    setTodoList(updateTodoList);
+
+
+
   }
   
   return (
