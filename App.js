@@ -3,10 +3,11 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 import Dialog from "react-native-dialog";
 import uuid from "react-native-uuid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
 
@@ -14,18 +15,17 @@ export default function App() {
   const [inputTodo, setInputTodo] = useState("");
   
   const [todoList, setTodoList] = useState([
-    { id: 1, title: "Nyari cemilan", isCompleted: true },
-    { id: 2, title: "Belajar React Native", isCompleted: false },
-    { id: 3, title: "Main Mobile Legend", isCompleted: false },
-    { id: 4, title: "Pergi bareng mantan", isCompleted: true },
-    { id: 5, title: "Main Mortal Kombat 1", isCompleted: false },
-    { id: 6, title: "Belajar Machine Learning", isCompleted: false },
-    { id: 7, title: "Ujian React Native", isCompleted: true },
-    { id: 8, title: "Mandi di sungai", isCompleted: false },
-    { id: 9, title: "Nyari kucing hilang", isCompleted: false },
+   
+   
   ]);
 
+  useEffect(()=>{
+    loadTodoList();
+  },[]);
 
+  useEffect(()=>{
+    saveTodoList();
+  },[todoList]);
   function renderTodoList() {
    
     return todoList.map((todo) => {
@@ -87,7 +87,7 @@ export default function App() {
       </Dialog.Description>
       <Dialog.Input  onChangeText= {setInputTodo} placeholder ="Mis : Mandi dan gosok gigi" />
       <Dialog.Button label="Cancel" onPress={()=>setIsShowAddDialog(false)} />
-      <Dialog.Button label="Save" onPress={addTodo} />
+      <Dialog.Button disabled = {inputTodo.length === 0} label="Save" onPress={addTodo} />
     </Dialog.Container>
   
     );
@@ -103,6 +103,25 @@ export default function App() {
     setTodoList([...todoList, newTodo]);
     setIsShowAddDialog(false);
     setInputTodo("");
+  }
+
+  async function saveTodoList(){
+    try{
+      await AsyncStorage.setItem("@todoList", JSON.stringify(todoList));
+
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  async function loadTodoList(){
+    try{
+      const todolistString = await AsyncStorage.getItem("@todoList");
+      const parsedTodoList = JSON.parse(todolistString);
+      setTodoList(parsedTodoList);
+    }catch(error){
+      console.log(error);
+    }
   }
   
   return (
