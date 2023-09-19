@@ -6,8 +6,12 @@ import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 import Dialog from "react-native-dialog";
+import uuid from "react-native-uuid";
 
 export default function App() {
+
+  const [isShowAddDialog, setIsShowAddDialog] = useState(false);
+  const [inputTodo, setInputTodo] = useState("");
   
   const [todoList, setTodoList] = useState([
     { id: 1, title: "Nyari cemilan", isCompleted: true },
@@ -20,9 +24,6 @@ export default function App() {
     { id: 8, title: "Mandi di sungai", isCompleted: false },
     { id: 9, title: "Nyari kucing hilang", isCompleted: false },
   ]);
-
-  
-
 
 
   function renderTodoList() {
@@ -79,17 +80,29 @@ export default function App() {
   function renderAddDialog(){
     return(
 
-      <Dialog.Container visible = {true}>
+      <Dialog.Container visible = {isShowAddDialog} onBackdropPress={()=>setIsShowAddDialog(false)}>
       <Dialog.Title>Tambah Todo</Dialog.Title>
       <Dialog.Description>
         Apa yang ingin kamu lakukan?.
       </Dialog.Description>
-      <Dialog.Input placeholder ="Mis : Mandi dan gosok gigi" />
-      <Dialog.Button label="Cancel" />
-      <Dialog.Button label="Save" />
+      <Dialog.Input  onChangeText= {setInputTodo} placeholder ="Mis : Mandi dan gosok gigi" />
+      <Dialog.Button label="Cancel" onPress={()=>setIsShowAddDialog(false)} />
+      <Dialog.Button label="Save" onPress={addTodo} />
     </Dialog.Container>
   
     );
+  }
+
+  function addTodo(){
+    const newTodo = {
+      id: uuid.v4(),
+      title: inputTodo,
+      isCompleted: false,
+    };
+
+    setTodoList([...todoList, newTodo]);
+    setIsShowAddDialog(false);
+    setInputTodo("");
   }
   
   return (
@@ -111,7 +124,7 @@ export default function App() {
         {renderTodoList() }
         </ScrollView>
 
-        <ButtonAdd  />
+        <ButtonAdd onPress={()=> setIsShowAddDialog(true)} />
 
           </View>
         </SafeAreaView>
