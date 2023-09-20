@@ -3,16 +3,20 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 import Dialog from "react-native-dialog";
 import uuid from "react-native-uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 
 export default function App() {
 
   const [isShowAddDialog, setIsShowAddDialog] = useState(false);
   const [inputTodo, setInputTodo] = useState("");
+  const[selectedTab,setSelectedTab] = useState("all");
+
+  const ScrollViewRef = useRef();
   
   const [todoList, setTodoList] = useState([
    
@@ -21,14 +25,17 @@ export default function App() {
 
   useEffect(()=>{
     loadTodoList();
+    
   },[]);
 
   useEffect(()=>{
     saveTodoList();
   },[todoList]);
+
+
   function renderTodoList() {
    
-    return todoList.map((todo) => {
+    return filterTodoList().map((todo) => {
    
       return(
       <View key = {todo.id} style={s.cardItem}>
@@ -103,6 +110,9 @@ export default function App() {
     setTodoList([...todoList, newTodo]);
     setIsShowAddDialog(false);
     setInputTodo("");
+    setTimeout(()=>{
+    ScrollViewRef.current.scrollToEnd();
+    },300);
   }
 
   async function saveTodoList(){
@@ -118,10 +128,25 @@ export default function App() {
     try{
       const todolistString = await AsyncStorage.getItem("@todoList");
       const parsedTodoList = JSON.parse(todolistString);
-      setTodoList(parsedTodoList);
+      setTodoList(parsedTodoList || []);
     }catch(error){
       console.log(error);
     }
+  }
+
+  function filterTodoList(){
+
+    switch(selectedTab){
+      case "all":
+        return todoList;
+      case "inprogress":
+        return todoList.filter((todo)=> !todo.isCompleted);
+      case "completed":
+        return todoList.filter((todo)=> todo.isCompleted);
+    }
+    return [];
+
+
   }
   
   return (
@@ -139,7 +164,7 @@ export default function App() {
           keyExtractor={item => item.id}>
         </FlatList> */}
 
-        <ScrollView>
+        <ScrollView ref = {ScrollViewRef}>
         {renderTodoList() }
         </ScrollView>
 
@@ -149,7 +174,7 @@ export default function App() {
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={s.footer}>
-        <Text>Footer</Text>
+        <TabBottomMenu todoList = {todoList} onPress = {setSelectedTab}/>
       </View>
       {renderAddDialog()}
     </>
